@@ -2,20 +2,19 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Excel.net</title>
     
     <!-- PWA & Mobile Meta Tags -->
-    <meta name="theme-color" content="#102238">
+    <meta name="theme-color" content="#0d1b2a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Excel.net">
     
-    <!-- App Icons & Apple Touch Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="icon.png">
+    <!-- Apple Touch Icons & Favicons (Fixes Home Screen Distortion) -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon-precomposed" href="icon.png">
     
     <!-- Web App Manifest -->
     <link rel="manifest" href='data:application/manifest+json,{
@@ -23,128 +22,164 @@
       "short_name": "Excel.net",
       "start_url": "./",
       "display": "standalone",
-      "background_color": "#102238",
-      "theme_color": "#00b4d8",
+      "background_color": "#0d1b2a",
+      "theme_color": "#0d1b2a",
       "icons": [
-        {"src": "icon.png", "sizes": "180x180", "type": "image/png"},
-        {"src": "icon.png", "sizes": "192x192", "type": "image/png"},
-        {"src": "icon.png", "sizes": "512x512", "type": "image/png"}
+        {"src": "icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"},
+        {"src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+        {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
       ]
     }'>
 
-    <!-- Luckysheet / FortuneSheet & SheetJS Dependencies -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/css/pluginsCss.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/plugins.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/css/luckysheet.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/assets/iconfont/iconfont.css" />
-    <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/js/plugin.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/luckysheet.umd.js"></script>
+    <!-- Luckysheet Standard CSS Dependencies -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css" />
 
-    <!-- SheetJS for XLSX Import/Export -->
+    <!-- Luckysheet JS, Luckyexcel & SheetJS Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
+    <!-- Custom Styling & Theme Customization -->
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #102238;
+            background-color: #0d1b2a;
             color: #f8fafc;
         }
-        #app-container {
+
+        #app-wrapper {
             display: flex;
             flex-direction: column;
             width: 100vw;
             height: 100vh;
+            height: -webkit-fill-available;
         }
+
+        /* Top Header Bar */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #102238;
-            padding: 10px 18px;
+            background-color: #0d1b2a;
+            padding: 8px 16px;
             border-bottom: 2px solid #00b4d8;
-            flex-wrap: wrap;
             gap: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             z-index: 1000;
+            flex-wrap: nowrap;
+            height: 56px;
+            min-height: 56px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .brand img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #00b4d8;
-            box-shadow: 0 0 8px rgba(0, 180, 216, 0.4);
-        }
-        .brand h1 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-        }
-        .brand h1 span {
-            color: #00b4d8;
-        }
-        .toolbar {
+
+        .brand-container {
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap;
+            min-width: 130px;
         }
+
+        /* Fixed Icon Aspect Ratio to prevent distortion */
+        .brand-logo {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            min-height: 34px;
+            max-width: 34px;
+            max-height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            border: 1.5px solid #00b4d8;
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.4);
+            background-color: #1b263b;
+        }
+
+        .brand-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+
+        .brand-title span {
+            color: #00b4d8;
+        }
+
+        .action-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .action-toolbar::-webkit-scrollbar {
+            display: none;
+        }
+
         .btn {
             background-color: #00b4d8;
-            color: #102238;
+            color: #0d1b2a;
             border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 0.88rem;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 6px rgba(0, 180, 216, 0.25);
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0, 180, 216, 0.25);
         }
-        .btn:hover {
-            background-color: #38bdf8;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 180, 216, 0.4);
-        }
+
         .btn:active {
-            transform: scale(0.97);
+            transform: scale(0.96);
+            background-color: #38bdf8;
         }
-        .btn-secondary {
-            background-color: #1a3554;
+
+        .btn-outline {
+            background-color: #1b263b;
             color: #e2e8f0;
-            border: 1px solid rgba(0, 180, 216, 0.3);
+            border: 1px solid rgba(0, 180, 216, 0.4);
             box-shadow: none;
         }
-        .btn-secondary:hover {
-            background-color: #24466d;
+
+        .btn-outline:active {
+            background-color: #24364e;
             border-color: #00b4d8;
-            color: #ffffff;
         }
+
         #file-input {
             display: none;
         }
-        #luckysheet-container {
+
+        /* Luckysheet Workspace Container */
+        #luckysheet-outer-container {
             position: relative;
             flex: 1;
             width: 100%;
+            height: calc(100vh - 56px);
+            overflow: hidden;
         }
+
         #luckysheet {
             margin: 0px;
             padding: 0px;
@@ -154,8 +189,8 @@
             left: 0px;
             top: 0px;
         }
-        
-        /* Custom Theme Overrides for Luckysheet Header/Tabs */
+
+        /* Overrides to clean up default Luckysheet branding elements */
         .luckysheet-share-logo {
             display: none !important;
         }
@@ -163,61 +198,70 @@
 </head>
 <body>
 
-    <div id="app-container">
+    <div id="app-wrapper">
+        <!-- Header Controls -->
         <header>
-            <div class="brand">
-                <img src="icon.png" alt="Excel.net Logo" onerror="this.onerror=null; this.src='https://placehold.co/100x100/102238/00b4d8?text=BE';">
-                <h1>Excel<span>.net</span></h1>
+            <div class="brand-container">
+                <img src="icon.png" class="brand-logo" alt="BE" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0d1b2a/00b4d8?text=BE';">
+                <div class="brand-title">Excel<span>.net</span></div>
             </div>
-            <div class="toolbar">
-                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+            <div class="action-toolbar">
+                <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">
                     📁 Datei öffnen
                 </button>
-                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" onchange="importFile(event)">
+                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" onchange="importXLSX(event)">
 
                 <button class="btn" onclick="exportXLSX()">
                     💾 Speichern (.xlsx)
                 </button>
-                <button class="btn btn-secondary" onclick="exportCSV()">
+                <button class="btn btn-outline" onclick="exportCSV()">
                     📄 Speichern (.csv)
                 </button>
             </div>
         </header>
 
-        <div id="luckysheet-container">
+        <!-- Main Luckysheet Grid Container -->
+        <div id="luckysheet-outer-container">
             <div id="luckysheet"></div>
         </div>
     </div>
 
+    <!-- Application Script Engine -->
     <script>
-        // Initialize Luckysheet with customized theme settings
-        $(function () {
-            luckysheet.create({
+        // Initialize Full Luckysheet Engine on DOM Load
+        $(document).ready(function () {
+            options = {
                 container: 'luckysheet',
-                title: 'Excel.net Arbeitsblatt',
-                lang: 'zh', // English/International fallbacks
+                title: 'Excel.net Tabelle',
+                lang: 'en', // International standard layout
                 showinfobar: false,
-                myFolderUrl: '',
                 showsheetbar: true,
                 showstatisticBar: true,
                 enableAddRow: true,
                 enableAddBackTop: true,
                 userInfo: false,
-                gridKey: 'excel_net_grid'
-            });
+                gridKey: 'excel_net_pwa_grid',
+                allowUpdate: true,
+                forceCalculation: true
+            };
+            
+            luckysheet.create(options);
         });
 
-        // Import XLSX or CSV File using SheetJS
-        function importFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
+        // Native XLSX & XLS File Import via Luckyexcel
+        function importXLSX(event) {
+            const files = event.target.files;
+            if (files == null || files.length == 0) {
+                return;
+            }
+            let item = files[0];
+            
+            // Handle CSV Import via SheetJS
+            if (item.name.endsWith('.csv')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -229,10 +273,7 @@
                                 celldata.push({
                                     r: r,
                                     c: c,
-                                    v: {
-                                        v: val,
-                                        m: String(val)
-                                    }
+                                    v: { v: val, m: String(val) }
                                 });
                             }
                         });
@@ -241,7 +282,7 @@
                     luckysheet.destroy();
                     luckysheet.create({
                         container: 'luckysheet',
-                        title: file.name.replace(/\.[^/.]+$/, ""),
+                        title: item.name.replace(/\.[^/.]+$/, ""),
                         data: [{
                             name: firstSheetName,
                             status: "1",
@@ -249,17 +290,37 @@
                             celldata: celldata
                         }]
                     });
-                } catch (err) {
-                    alert('Fehler beim Laden der Datei. Bitte stelle sicher, dass es eine gültige .xlsx oder .csv Datei ist.');
+                };
+                reader.readAsArrayBuffer(item);
+                return;
+            }
+
+            // Handle Native Excel Files (.xlsx)
+            LuckyExcel.transformExcelToLucky(item, function (exportJson, luckysheetfile) {
+                if (exportJson.sheets == null || exportJson.sheets.length == 0) {
+                    alert("Datei konnte nicht gelesen werden!");
+                    return;
                 }
-            };
-            reader.readAsArrayBuffer(file);
+
+                luckysheet.destroy();
+                luckysheet.create({
+                    container: 'luckysheet',
+                    title: exportJson.info.name || "Excel.net Tabelle",
+                    data: exportJson.sheets,
+                    userInfo: false,
+                    showinfobar: false
+                });
+            }, function (err) {
+                alert("Fehler beim Laden der Excel-Datei: " + err);
+            });
         }
 
-        // Export data to XLSX
+        // Native XLSX File Export using SheetJS
         function exportXLSX() {
             try {
                 const sheetData = luckysheet.getluckysheetfile();
+                if(!sheetData) return;
+
                 let wb = XLSX.utils.book_new();
 
                 sheetData.forEach(sheet => {
@@ -270,11 +331,12 @@
 
                 XLSX.writeFile(wb, "Excel.net_Tabelle.xlsx");
             } catch (e) {
-                console.error("Export Error: ", e);
+                console.error("XLSX Export Error: ", e);
+                alert("Fehler beim Exportieren der Datei.");
             }
         }
 
-        // Export active sheet to CSV
+        // CSV File Export
         function exportCSV() {
             try {
                 const sheetData = luckysheet.getluckysheetfile()[0];
@@ -282,7 +344,7 @@
                 let ws = XLSX.utils.aoa_to_sheet(data);
                 let csv = XLSX.utils.sheet_to_csv(ws);
 
-                let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                let blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
                 let link = document.createElement("a");
                 link.href = URL.createObjectURL(blob);
                 link.setAttribute("download", "Excel.net_Tabelle.csv");
@@ -291,6 +353,7 @@
                 document.body.removeChild(link);
             } catch (e) {
                 console.error("CSV Export Error: ", e);
+                alert("Fehler beim Erstellen der CSV-Datei.");
             }
         }
     </script>
