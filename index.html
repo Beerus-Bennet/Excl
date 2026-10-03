@@ -11,10 +11,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Excel.net">
     
-    <!-- Icons & Favicons (Fixes Home Screen Distortion) -->
+    <!-- Icons & Favicons -->
     <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-    <link rel="apple-touch-icon-precomposed" href="icon.png">
     
     <!-- Web App Manifest -->
     <link rel="manifest" href='data:application/manifest+json,{
@@ -26,12 +25,11 @@
       "theme_color": "#0d1b2a",
       "icons": [
         {"src": "icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"},
-        {"src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
         {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
       ]
     }'>
 
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome Icons & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Luckysheet Standard CSS Dependencies -->
@@ -40,7 +38,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css" />
 
-    <!-- Luckysheet JS, Luckyexcel & SheetJS Libraries -->
+    <!-- Luckysheet JS & Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
@@ -49,13 +47,14 @@
     <style>
         :root {
             --bg-dark: #0d1b2a;
-            --bg-secondary: #1b263b;
-            --bg-tertiary: #24364e;
+            --bg-header: #132238;
+            --bg-ribbon: #1b263b;
+            --bg-button: #24364e;
             --accent-cyan: #00b4d8;
-            --accent-cyan-hover: #38bdf8;
-            --text-light: #e2e8f0;
+            --accent-hover: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             --border-color: rgba(0, 180, 216, 0.25);
-            --excel-green: #107c41;
         }
 
         * {
@@ -71,7 +70,7 @@
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-dark);
-            color: var(--text-light);
+            color: var(--text-main);
         }
 
         #app-wrapper {
@@ -82,423 +81,352 @@
             height: -webkit-fill-available;
         }
 
-        /* Excel Main Header / Quick Access Bar */
-        header.excel-header {
+        /* Header Bar */
+        header.top-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: var(--bg-dark);
-            padding: 6px 12px;
+            background-color: var(--bg-header);
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
-            height: 48px;
-            min-height: 48px;
-            z-index: 1000;
+            gap: 10px;
+            flex-wrap: nowrap;
+            min-height: 50px;
         }
 
-        .brand-container {
+        .brand-box {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .brand-logo {
             width: 32px;
             height: 32px;
-            min-width: 32px;
-            min-height: 32px;
             border-radius: 50%;
-            object-fit: cover;
-            aspect-ratio: 1 / 1;
             border: 1.5px solid var(--accent-cyan);
-            box-shadow: 0 0 6px rgba(0, 180, 216, 0.4);
-            background-color: var(--bg-secondary);
+            object-fit: cover;
+            background-color: var(--bg-ribbon);
         }
 
-        .brand-title {
-            font-size: 1.15rem;
+        .brand-name {
+            font-size: 1.1rem;
             font-weight: 800;
             color: #ffffff;
-            letter-spacing: -0.3px;
-            white-space: nowrap;
+            letter-spacing: -0.2px;
         }
 
-        .brand-title span {
-            color: var(--accent-cyan);
-        }
+        .brand-name span { color: var(--accent-cyan); }
 
-        .file-actions {
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
+        .header-actions::-webkit-scrollbar { display: none; }
 
-        .btn {
+        .app-btn {
             background-color: var(--accent-cyan);
             color: var(--bg-dark);
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
         }
 
-        .btn:hover {
-            background-color: var(--accent-cyan-hover);
-        }
-
-        .btn-outline {
-            background-color: var(--bg-secondary);
-            color: var(--text-light);
+        .app-btn-outline {
+            background-color: var(--bg-button);
+            color: var(--text-main);
             border: 1px solid var(--border-color);
         }
 
-        .btn-outline:hover {
-            background-color: var(--bg-tertiary);
-            border-color: var(--accent-cyan);
-        }
-
+        .app-btn:active { opacity: 0.8; }
         #file-input { display: none; }
 
-        /* Excel Ribbon Toolbar Tabs */
-        .ribbon-tabs {
+        /* Ribbon Navigation Tabs */
+        .ribbon-tabs-nav {
             display: flex;
-            background-color: var(--bg-secondary);
-            padding: 0 12px;
+            background-color: var(--bg-dark);
+            padding: 0 8px;
             border-bottom: 1px solid var(--border-color);
-            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
+        .ribbon-tabs-nav::-webkit-scrollbar { display: none; }
 
-        .ribbon-tab {
-            padding: 6px 14px;
-            font-size: 0.82rem;
+        .tab-btn {
+            padding: 8px 14px;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #94a3b8;
-            cursor: pointer;
+            color: var(--text-muted);
+            background: none;
+            border: none;
             border-bottom: 2px solid transparent;
-            transition: all 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
         }
 
-        .ribbon-tab:hover {
-            color: #ffffff;
-        }
-
-        .ribbon-tab.active {
+        .tab-btn.active {
             color: var(--accent-cyan);
             border-bottom-color: var(--accent-cyan);
-            background-color: rgba(0, 180, 216, 0.08);
+            background-color: rgba(0, 180, 216, 0.1);
         }
 
-        /* Excel Formula Bar Section */
-        .excel-formula-container {
+        /* Ribbon Action Toolbar */
+        .ribbon-toolbar-content {
+            background-color: var(--bg-ribbon);
+            border-bottom: 1px solid var(--border-color);
+            padding: 6px 10px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toolbar-group {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            width: 100%;
+            scrollbar-width: none;
+        }
+        .toolbar-group::-webkit-scrollbar { display: none; }
+        .toolbar-group.active { display: flex; }
+
+        .tool-action-btn {
+            background-color: var(--bg-button);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tool-action-btn i { color: var(--accent-cyan); }
+        .tool-action-btn:active { background-color: var(--accent-cyan); color: var(--bg-dark); }
+        .tool-action-btn:active i { color: var(--bg-dark); }
+
+        /* Formula Bar Integration */
+        .single-formula-bar {
             display: flex;
             align-items: center;
             background-color: var(--bg-dark);
             border-bottom: 1px solid var(--border-color);
             padding: 4px 8px;
             gap: 6px;
-            height: 34px;
+            height: 36px;
         }
 
-        .name-box {
-            width: 70px;
-            background-color: var(--bg-secondary);
+        .cell-address-box {
+            width: 65px;
+            background-color: var(--bg-ribbon);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
             font-weight: 700;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             text-align: center;
-            padding: 3px 6px;
+            padding: 4px;
             border-radius: 4px;
             outline: none;
         }
 
-        .formula-actions {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #94a3b8;
-        }
-
-        .formula-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .formula-btn:hover {
-            color: var(--accent-cyan);
-            background-color: var(--bg-secondary);
-        }
-
-        .formula-btn.accept:hover { color: #22c55e; }
-        .formula-btn.cancel:hover { color: #ef4444; }
-
-        .fx-symbol {
+        .fx-label {
             font-weight: 800;
             font-style: italic;
             color: var(--accent-cyan);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             padding: 0 4px;
         }
 
-        .formula-input-bar {
+        .formula-input {
             flex: 1;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-ribbon);
             border: 1px solid var(--border-color);
-            color: #ffffff;
+            color: var(--text-main);
             font-size: 0.85rem;
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
             outline: none;
-            font-family: monospace;
         }
 
-        .formula-input-bar:focus {
-            border-color: var(--accent-cyan);
-        }
+        .formula-input:focus { border-color: var(--accent-cyan); }
 
-        /* Main Grid Area */
-        #luckysheet-outer-container {
-            position: relative;
+        /* Luckysheet Grid Container */
+        #grid-container {
             flex: 1;
             width: 100%;
+            position: relative;
             overflow: hidden;
         }
 
         #luckysheet {
-            margin: 0px;
-            padding: 0px;
             position: absolute;
             width: 100%;
             height: 100%;
-            left: 0px;
-            top: 0px;
+            left: 0;
+            top: 0;
         }
 
-        /* Excel Custom Status Bar */
-        .excel-status-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            height: 26px;
-            min-height: 26px;
+        /* Hide built-in Luckysheet header/infobar to eliminate duplicates */
+        .luckysheet-share-logo, 
+        .luckysheet-title-outer, 
+        #luckysheet-wa-editor {
+            display: none !important;
         }
-
-        .status-metrics {
-            display: flex;
-            gap: 14px;
-            font-weight: 600;
-        }
-
-        .status-metrics span span {
-            color: var(--accent-cyan);
-        }
-
-        .status-zoom {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .zoom-slider {
-            width: 80px;
-            accent-color: var(--accent-cyan);
-            cursor: pointer;
-        }
-
-        /* Overrides for Luckysheet Theme Compatibility */
-        .luckysheet-share-logo { display: none !important; }
-        .luckysheet-wa-editor { background-color: var(--bg-dark) !important; }
     </style>
 </head>
 <body>
 
     <div id="app-wrapper">
-        <!-- Top Excel Header -->
-        <header class="excel-header">
-            <div class="brand-container">
+        <!-- Compact Top Header -->
+        <header class="top-header">
+            <div class="brand-box">
                 <img src="icon.png" class="brand-logo" alt="BE" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0d1b2a/00b4d8?text=BE';">
-                <div class="brand-title">Excel<span>.net</span></div>
+                <div class="brand-name">Excel<span>.net</span></div>
             </div>
 
-            <div class="file-actions">
-                <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">
+            <div class="header-actions">
+                <button class="app-btn app-btn-outline" onclick="document.getElementById('file-input').click()">
                     <i class="fa-solid fa-folder-open"></i> Öffnen
                 </button>
-                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" onchange="importXLSX(event)">
+                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" onchange="importFile(event)">
 
-                <button class="btn" onclick="exportXLSX()">
+                <button class="app-btn" onclick="exportXLSX()">
                     <i class="fa-solid fa-file-excel"></i> Speichern (.xlsx)
                 </button>
-                <button class="btn btn-outline" onclick="exportCSV()">
+                <button class="app-btn app-btn-outline" onclick="exportCSV()">
                     <i class="fa-solid fa-file-csv"></i> CSV
                 </button>
             </div>
         </header>
 
-        <!-- Excel Ribbon Tab Navigation Bar -->
-        <div class="ribbon-tabs">
-            <div class="ribbon-tab active" onclick="setRibbonTab(this, 'start')">Start</div>
-            <div class="ribbon-tab" onclick="setRibbonTab(this, 'insert')">Einfügen</div>
-            <div class="ribbon-tab" onclick="setRibbonTab(this, 'formulas')">Formeln</div>
-            <div class="ribbon-tab" onclick="setRibbonTab(this, 'data')">Daten</div>
-            <div class="ribbon-tab" onclick="setRibbonTab(this, 'view')">Ansicht</div>
+        <!-- Ribbon Tab Buttons -->
+        <div class="ribbon-tabs-nav">
+            <button class="tab-btn active" onclick="switchRibbonTab(this, 'tab-start')">Start</button>
+            <button class="tab-btn" onclick="switchRibbonTab(this, 'tab-insert')">Einfügen</button>
+            <button class="tab-btn" onclick="switchRibbonTab(this, 'tab-formulas')">Formeln</button>
+            <button class="tab-btn" onclick="switchRibbonTab(this, 'tab-data')">Daten</button>
+            <button class="tab-btn" onclick="switchRibbonTab(this, 'tab-view')">Ansicht</button>
         </div>
 
-        <!-- Formula Bar with Name Box & Controls -->
-        <div class="excel-formula-container">
-            <input type="text" id="excel-name-box" class="name-box" value="A1" readonly title="Zelladresse / Name Box">
-            <div class="formula-actions">
-                <button class="formula-btn cancel" onclick="cancelFormula()" title="Abbrechen (Esc)"><i class="fa-solid fa-xmark"></i></button>
-                <button class="formula-btn accept" onclick="acceptFormula()" title="Eingabe bestätigen (Enter)"><i class="fa-solid fa-check"></i></button>
+        <!-- Dynamic Ribbon Toolbars -->
+        <div class="ribbon-toolbar-content">
+            <!-- Tab: Start -->
+            <div id="tab-start" class="toolbar-group active">
+                <button class="tool-action-btn" onclick="executeLuckysheetCmd('undo')"><i class="fa-solid fa-rotate-left"></i> Rückgängig</button>
+                <button class="tool-action-btn" onclick="executeLuckysheetCmd('redo')"><i class="fa-solid fa-rotate-right"></i> Wiederholen</button>
+                <button class="tool-action-btn" onclick="executeLuckysheetCmd('bold')"><i class="fa-solid fa-bold"></i> Fett</button>
+                <button class="tool-action-btn" onclick="executeLuckysheetCmd('italic')"><i class="fa-solid fa-italic"></i> Kursiv</button>
             </div>
-            <span class="fx-symbol">fx</span>
-            <input type="text" id="excel-formula-bar" class="formula-input-bar" placeholder="Wert oder Formel eingeben (z. B. =SUMME(A1:A5))" onkeyup="handleFormulaKey(event)" oninput="syncFormulaToSheet(this.value)">
+
+            <!-- Tab: Einfügen -->
+            <div id="tab-insert" class="toolbar-group">
+                <button class="tool-action-btn" onclick="insertRow()"><i class="fa-solid fa-table-rows"></i> Zeile oberhalb</button>
+                <button class="tool-action-btn" onclick="insertCol()"><i class="fa-solid fa-table-columns"></i> Spalte links</button>
+                <button class="tool-action-btn" onclick="alert('Diagramm-Assistent bereit')"><i class="fa-solid fa-chart-column"></i> Diagramm</button>
+            </div>
+
+            <!-- Tab: Formeln -->
+            <div id="tab-formulas" class="toolbar-group">
+                <button class="tool-action-btn" onclick="insertFormula('SUM')"><i class="fa-solid fa-calculator"></i> SUMME</button>
+                <button class="tool-action-btn" onclick="insertFormula('AVERAGE')"><i class="fa-solid fa-chart-line"></i> MITTELWERT</button>
+                <button class="tool-action-btn" onclick="insertFormula('COUNT')"><i class="fa-solid fa-hashtag"></i> ANZAHL</button>
+                <button class="tool-action-btn" onclick="insertFormula('MAX')"><i class="fa-solid fa-arrow-up"></i> MAX</button>
+                <button class="tool-action-btn" onclick="insertFormula('MIN')"><i class="fa-solid fa-arrow-down"></i> MIN</button>
+            </div>
+
+            <!-- Tab: Daten -->
+            <div id="tab-data" class="toolbar-group">
+                <button class="tool-action-btn" onclick="sortData('asc')"><i class="fa-solid fa-arrow-down-a-z"></i> Sortieren A-Z</button>
+                <button class="tool-action-btn" onclick="sortData('desc')"><i class="fa-solid fa-arrow-up-z-a"></i> Sortieren Z-A</button>
+                <button class="tool-action-btn" onclick="toggleFilter()"><i class="fa-solid fa-filter"></i> Filter umschalten</button>
+            </div>
+
+            <!-- Tab: Ansicht -->
+            <div id="tab-view" class="toolbar-group">
+                <button class="tool-action-btn" onclick="toggleGridlines()"><i class="fa-solid fa-border-all"></i> Gitterlinien</button>
+                <button class="tool-action-btn" onclick="setZoom(1.2)"><i class="fa-solid fa-magnifying-glass-plus"></i> Vergrößern</button>
+                <button class="tool-action-btn" onclick="setZoom(1.0)"><i class="fa-solid fa-rotate"></i> 100% Zoom</button>
+            </div>
+        </div>
+
+        <!-- Single Formula Bar -->
+        <div class="single-formula-bar">
+            <input type="text" id="name-box" class="cell-address-box" value="A1" readonly>
+            <span class="fx-label">fx</span>
+            <input type="text" id="formula-input" class="formula-input" placeholder="Geben Sie einen Wert oder eine Formel ein..." oninput="onFormulaInputChange(this.value)">
         </div>
 
         <!-- Main Workspace Sheet Grid -->
-        <div id="luckysheet-outer-container">
+        <div id="grid-container">
             <div id="luckysheet"></div>
-        </div>
-
-        <!-- Status Bar with Quick Metrics & Zoom -->
-        <div class="excel-status-bar">
-            <div>Bereit</div>
-            <div class="status-metrics">
-                <span>Mittelwert: <span id="stat-avg">-</span></span>
-                <span>Anzahl: <span id="stat-count">0</span></span>
-                <span>Summe: <span id="stat-sum">-</span></span>
-            </div>
-            <div class="status-zoom">
-                <i class="fa-solid fa-minus" onclick="adjustZoom(-10)"></i>
-                <input type="range" class="zoom-slider" id="zoom-range" min="50" max="150" value="100" oninput="changeZoom(this.value)">
-                <i class="fa-solid fa-plus" onclick="adjustZoom(10)"></i>
-                <span id="zoom-label">100%</span>
-            </div>
         </div>
     </div>
 
     <script>
-        let currentZoom = 100;
-
-        // Initialize Full Luckysheet Engine with Full Feature Configuration
+        // Luckysheet Initialization
         $(document).ready(function () {
-            options = {
+            luckysheet.create({
                 container: 'luckysheet',
                 title: 'Excel.net Tabelle',
                 lang: 'en',
                 showinfobar: false,
                 showsheetbar: true,
-                showstatisticBar: false, // Replaced by native Excel bottom status bar
+                showstatisticBar: true,
                 enableAddRow: true,
                 enableAddBackTop: true,
                 userInfo: false,
-                gridKey: 'excel_net_pwa_grid',
-                allowUpdate: true,
-                forceCalculation: true,
-                cellRightClickConfig: {
-                    copy: true,
-                    copyAs: true,
-                    paste: true,
-                    insertRow: true,
-                    insertColumn: true,
-                    deleteRow: true,
-                    deleteColumn: true,
-                    deleteCell: true,
-                    hideRow: true,
-                    hideColumn: true,
-                    rowHeight: true,
-                    columnWidth: true,
-                    sort: true,
-                    filter: true,
-                    chart: true,
-                    image: true,
-                    link: true,
-                    data: true,
-                    cellFormat: true
-                },
+                gridKey: 'excel_net_grid_key',
                 hook: {
-                    cellRenderAfter: function () {
-                        updateActiveCellDisplay();
-                    },
+                    cellRenderAfter: syncFormulaBar,
                     cellMousedown: function () {
-                        setTimeout(updateActiveCellDisplay, 50);
+                        setTimeout(syncFormulaBar, 50);
                     },
                     sheetActivate: function () {
-                        setTimeout(updateActiveCellDisplay, 50);
+                        setTimeout(syncFormulaBar, 50);
                     }
                 }
-            };
-            
-            luckysheet.create(options);
+            });
         });
 
-        // Sync Cell Address & Value to Name Box and Formula Bar
-        function updateActiveCellDisplay() {
+        // Sync Cell Address and Formula Bar Input
+        function syncFormulaBar() {
             try {
-                let lastExtra = luckysheet.getSelectRange();
-                if (lastExtra && lastExtra.length > 0) {
-                    let r = lastExtra[0].row[0];
-                    let c = lastExtra[0].column[0];
-                    let colName = getColName(c);
-                    let cellAddress = colName + (r + 1);
+                let range = luckysheet.getSelectRange();
+                if (range && range.length > 0) {
+                    let r = range[0].row[0];
+                    let c = range[0].column[0];
                     
-                    document.getElementById('excel-name-box').value = cellAddress;
+                    let colName = getColumnName(c);
+                    document.getElementById('name-box').value = colName + (r + 1);
 
-                    let cellValue = luckysheet.getCellValue(r, c);
-                    let formulaBar = document.getElementById('excel-formula-bar');
-                    if (document.activeElement !== formulaBar) {
-                        formulaBar.value = (cellValue !== null && cellValue !== undefined) ? cellValue : '';
+                    let val = luckysheet.getCellValue(r, c);
+                    let input = document.getElementById('formula-input');
+                    if (document.activeElement !== input) {
+                        input.value = (val !== null && val !== undefined) ? val : '';
                     }
-
-                    calculateSelectionMetrics(lastExtra[0]);
                 }
             } catch (e) {
-                console.log("Cell selection sync active", e);
+                console.log("Sync error", e);
             }
         }
 
-        // Live calculation metrics for status bar (Summe, Mittelwert, Anzahl)
-        function calculateSelectionMetrics(range) {
-            let sum = 0;
-            let count = 0;
-            let numCount = 0;
-
-            for (let r = range.row[0]; r <= range.row[1]; r++) {
-                for (let c = range.column[0]; c <= range.column[1]; c++) {
-                    let val = luckysheet.getCellValue(r, c);
-                    if (val !== null && val !== undefined && val !== '') {
-                        count++;
-                        let num = parseFloat(val);
-                        if (!isNaN(num)) {
-                            sum += num;
-                            numCount++;
-                        }
-                    }
-                }
-            }
-
-            document.getElementById('stat-count').innerText = count;
-            document.getElementById('stat-sum').innerText = numCount > 0 ? sum.toLocaleString('de-DE', { maximumFractionDigits: 2 }) : '-';
-            document.getElementById('stat-avg').innerText = numCount > 0 ? (sum / numCount).toLocaleString('de-DE', { maximumFractionDigits: 2 }) : '-';
-        }
-
-        function getColName(n) {
+        function getColumnName(n) {
             let name = '';
             while (n >= 0) {
                 name = String.fromCharCode((n % 26) + 65) + name;
@@ -507,61 +435,74 @@
             return name;
         }
 
-        // Formula Bar Controls
-        function syncFormulaToSheet(val) {
-            let lastExtra = luckysheet.getSelectRange();
-            if (lastExtra && lastExtra.length > 0) {
-                let r = lastExtra[0].row[0];
-                let c = lastExtra[0].column[0];
+        function onFormulaInputChange(val) {
+            let range = luckysheet.getSelectRange();
+            if (range && range.length > 0) {
+                let r = range[0].row[0];
+                let c = range[0].column[0];
                 luckysheet.setCellValue(r, c, val);
             }
         }
 
-        function handleFormulaKey(e) {
-            if (e.key === 'Enter') {
-                acceptFormula();
-            } else if (e.key === 'Escape') {
-                cancelFormula();
+        // Ribbon Tab Switcher
+        function switchRibbonTab(buttonEl, tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.toolbar-group').forEach(group => group.classList.remove('active'));
+
+            buttonEl.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Helper Toolbar Actions
+        function executeLuckysheetCmd(cmd) {
+            if (cmd === 'undo') luckysheet.undo();
+            else if (cmd === 'redo') luckysheet.redo();
+            else if (cmd === 'bold') luckysheet.setFontBold();
+            else if (cmd === 'italic') luckysheet.setFontItalic();
+        }
+
+        function insertRow() {
+            luckysheet.insertRow();
+        }
+
+        function insertCol() {
+            luckysheet.insertColumn();
+        }
+
+        function insertFormula(fnName) {
+            let range = luckysheet.getSelectRange();
+            if (range && range.length > 0) {
+                let r = range[0].row[0];
+                let c = range[0].column[0];
+                let formula = `=${fnName}()`;
+                luckysheet.setCellValue(r, c, formula);
+                document.getElementById('formula-input').value = formula;
             }
         }
 
-        function acceptFormula() {
-            updateActiveCellDisplay();
-            document.getElementById('excel-formula-bar').blur();
+        function sortData(order) {
+            luckysheet.sortSelection(order === 'asc');
         }
 
-        function cancelFormula() {
-            updateActiveCellDisplay();
-            document.getElementById('excel-formula-bar').blur();
+        function toggleFilter() {
+            luckysheet.toggleFilter();
         }
 
-        // Ribbon Navigation Switching
-        function setRibbonTab(element, tabName) {
-            document.querySelectorAll('.ribbon-tab').forEach(tab => tab.classList.remove('active'));
-            element.classList.add('active');
+        function toggleGridlines() {
+            luckysheet.setShowGridLines(!luckysheet.getShowGridLines());
         }
 
-        // Zoom Controls
-        function changeZoom(val) {
-            currentZoom = parseInt(val);
-            document.getElementById('zoom-label').innerText = currentZoom + '%';
-            $('#luckysheet-outer-container').css('transform', `scale(${currentZoom / 100})`);
-            $('#luckysheet-outer-container').css('transform-origin', '0 0');
+        function setZoom(factor) {
+            luckysheet.setZoomRatio(factor);
         }
 
-        function adjustZoom(delta) {
-            let newZoom = Math.min(Math.max(currentZoom + delta, 50), 150);
-            document.getElementById('zoom-range').value = newZoom;
-            changeZoom(newZoom);
-        }
-
-        // Native XLSX & XLS Import
-        function importXLSX(event) {
+        // XLSX / CSV File Import
+        function importFile(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
-            let item = files[0];
+            let file = files[0];
 
-            if (item.name.endsWith('.csv')) {
+            if (file.name.endsWith('.csv')) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const data = new Uint8Array(e.target.result);
@@ -582,17 +523,17 @@
                     luckysheet.destroy();
                     luckysheet.create({
                         container: 'luckysheet',
-                        title: item.name.replace(/\.[^/.]+$/, ""),
+                        title: file.name.replace(/\.[^/.]+$/, ""),
                         data: [{ name: firstSheetName, status: "1", order: "0", celldata: celldata }]
                     });
                 };
-                reader.readAsArrayBuffer(item);
+                reader.readAsArrayBuffer(file);
                 return;
             }
 
-            LuckyExcel.transformExcelToLucky(item, function (exportJson) {
+            LuckyExcel.transformExcelToLucky(file, function (exportJson) {
                 if (!exportJson.sheets || exportJson.sheets.length === 0) {
-                    alert("Datei konnte nicht gelesen werden!");
+                    alert("Konnte Datei nicht öffnen.");
                     return;
                 }
                 luckysheet.destroy();
@@ -603,12 +544,10 @@
                     userInfo: false,
                     showinfobar: false
                 });
-            }, function (err) {
-                alert("Fehler beim Laden der Excel-Datei: " + err);
             });
         }
 
-        // Native Export Functions
+        // Export Functions
         function exportXLSX() {
             try {
                 const sheetData = luckysheet.getluckysheetfile();
@@ -623,7 +562,7 @@
 
                 XLSX.writeFile(wb, "Excel.net_Tabelle.xlsx");
             } catch (e) {
-                alert("Fehler beim Exportieren der XLSX-Datei.");
+                alert("Fehler beim Exportieren als XLSX.");
             }
         }
 
@@ -642,21 +581,9 @@
                 link.click();
                 document.body.removeChild(link);
             } catch (e) {
-                alert("Fehler beim Erstellen der CSV-Datei.");
+                alert("Fehler beim Exportieren als CSV.");
             }
         }
     </script>
 </body>
 </html>
-```
-
-### Anpassungen im Detail:
-1. **Vergleich & Abgleich mit Microsoft Excel:**
-   - **Ribbon-Navigation:** Die bekannten Excel-Kategorien (Start, Einfügen, Formeln, Daten, Ansicht) sind vorhanden.
-   - **Namensfeld (Name Box):** Zeigt dynamisch die aktive Zelle an (z. B. `A1`, `B5`).
-   - **Bearbeitungsleiste:** Mit `fx`-Symbol sowie Bestätigen- (`✓`) und Abbrechen-Buttons (`✕`).
-   - **Live-Statusleiste:** Zeigt bei Markierung von Zellen automatisch **Summe, Mittelwert und Anzahl** an sowie einen interaktiven **Zoom-Slider (50% bis 150%)**.
-   - **Tabellen-Engine:** Formeln, bedingte Formatierung, Zellformatierung, Sortierung, Tabellenreiter und Rechtsklick-Kontextmenüs sind vollständig aktiv.
-
-2. **iOS PWA Icon Fix:**
-   - Das Manifest und die Apple Touch Icon Tags wurden so formatiert, dass das Bild quadratisch skaliert wird und auf dem Homescreen ohne Verzerrung dargestellt wird.
