@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Excel.net - Tabellenkalkulation</title>
     
-    <!-- PWA & Mobile Meta Tags -->
+    <!-- PWA & Mobile Meta Tags with Safe Area handling -->
     <meta name="theme-color" content="#0d1b2a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Excel.net">
-    
-    <!-- Icons & Favicons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
     
     <!-- Web App Manifest -->
     <link rel="manifest" href='data:application/manifest+json,{
@@ -24,8 +20,8 @@
       "background_color": "#0d1b2a",
       "theme_color": "#0d1b2a",
       "icons": [
-        {"src": "icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"},
-        {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+        {"src": "https://placehold.co/180x180/0d1b2a/00b4d8?text=BE", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"},
+        {"src": "https://placehold.co/512x512/0d1b2a/00b4d8?text=BE", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
       ]
     }'>
 
@@ -38,7 +34,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css" />
 
-    <!-- Luckysheet JS & Libraries -->
+    <!-- jQuery, Luckysheet JS & Export Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
@@ -81,17 +77,21 @@
             height: -webkit-fill-available;
         }
 
-        /* Header Bar */
+        /* Top Header with iOS Safe Area Notch Padding Fix */
         header.top-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background-color: var(--bg-header);
-            padding: 8px 12px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            padding-bottom: 10px;
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
             border-bottom: 1px solid var(--border-color);
             gap: 10px;
             flex-wrap: nowrap;
-            min-height: 50px;
+            min-height: calc(52px + env(safe-area-inset-top, 0px));
+            z-index: 100;
         }
 
         .brand-box {
@@ -124,7 +124,9 @@
             align-items: center;
             gap: 6px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            flex-shrink: 0;
         }
         .header-actions::-webkit-scrollbar { display: none; }
 
@@ -132,7 +134,7 @@
             background-color: var(--accent-cyan);
             color: var(--bg-dark);
             border: none;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 700;
@@ -141,6 +143,7 @@
             align-items: center;
             gap: 5px;
             white-space: nowrap;
+            touch-action: manipulation;
         }
 
         .app-btn-outline {
@@ -149,7 +152,7 @@
             border: 1px solid var(--border-color);
         }
 
-        .app-btn:active { opacity: 0.8; }
+        .app-btn:active { opacity: 0.8; transform: scale(0.98); }
         #file-input { display: none; }
 
         /* Ribbon Navigation Tabs */
@@ -159,20 +162,24 @@
             padding: 0 8px;
             border-bottom: 1px solid var(--border-color);
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .ribbon-tabs-nav::-webkit-scrollbar { display: none; }
 
         .tab-btn {
-            padding: 8px 14px;
+            padding: 10px 16px;
             font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-muted);
             background: none;
             border: none;
-            border-bottom: 2px solid transparent;
+            border-bottom: 2.5px solid transparent;
             cursor: pointer;
             white-space: nowrap;
+            display: inline-block;
         }
 
         .tab-btn.active {
@@ -181,25 +188,29 @@
             background-color: rgba(0, 180, 216, 0.1);
         }
 
-        /* Ribbon Action Toolbar */
+        /* Ribbon Action Toolbar with Swiping Support */
         .ribbon-toolbar-content {
             background-color: var(--bg-ribbon);
             border-bottom: 1px solid var(--border-color);
             padding: 6px 10px;
-            min-height: 44px;
+            min-height: 46px;
             display: flex;
             align-items: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            flex-shrink: 0;
         }
+        .ribbon-toolbar-content::-webkit-scrollbar { display: none; }
 
         .toolbar-group {
             display: none;
             align-items: center;
             gap: 8px;
-            overflow-x: auto;
-            width: 100%;
-            scrollbar-width: none;
+            white-space: nowrap;
+            flex-wrap: nowrap;
+            width: max-content;
         }
-        .toolbar-group::-webkit-scrollbar { display: none; }
         .toolbar-group.active { display: flex; }
 
         .tool-action-btn {
@@ -207,7 +218,7 @@
             color: var(--text-main);
             border: 1px solid var(--border-color);
             padding: 6px 12px;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
@@ -215,6 +226,7 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
+            touch-action: manipulation;
         }
 
         .tool-action-btn i { color: var(--accent-cyan); }
@@ -229,11 +241,12 @@
             border-bottom: 1px solid var(--border-color);
             padding: 4px 8px;
             gap: 6px;
-            height: 36px;
+            height: 38px;
+            flex-shrink: 0;
         }
 
         .cell-address-box {
-            width: 65px;
+            width: 60px;
             background-color: var(--bg-ribbon);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
@@ -243,6 +256,7 @@
             padding: 4px;
             border-radius: 4px;
             outline: none;
+            flex-shrink: 0;
         }
 
         .fx-label {
@@ -251,6 +265,7 @@
             color: var(--accent-cyan);
             font-size: 0.95rem;
             padding: 0 4px;
+            flex-shrink: 0;
         }
 
         .formula-input {
@@ -259,14 +274,15 @@
             border: 1px solid var(--border-color);
             color: var(--text-main);
             font-size: 0.85rem;
-            padding: 4px 8px;
+            padding: 5px 8px;
             border-radius: 4px;
             outline: none;
+            min-width: 0;
         }
 
         .formula-input:focus { border-color: var(--accent-cyan); }
 
-        /* Luckysheet Grid Container */
+        /* Luckysheet Grid Workspace */
         #grid-container {
             flex: 1;
             width: 100%;
@@ -282,7 +298,7 @@
             top: 0;
         }
 
-        /* Hide built-in Luckysheet header/infobar to eliminate duplicates */
+        /* Suppress built-in duplicate Luckysheet header elements */
         .luckysheet-share-logo, 
         .luckysheet-title-outer, 
         #luckysheet-wa-editor {
@@ -293,10 +309,10 @@
 <body>
 
     <div id="app-wrapper">
-        <!-- Compact Top Header -->
+        <!-- Compact Top Header with Safe Area Notch Adjustment -->
         <header class="top-header">
             <div class="brand-box">
-                <img src="icon.png" class="brand-logo" alt="BE" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0d1b2a/00b4d8?text=BE';">
+                <img src="https://placehold.co/100x100/0d1b2a/00b4d8?text=BE" class="brand-logo" alt="BE">
                 <div class="brand-name">Excel<span>.net</span></div>
             </div>
 
@@ -315,7 +331,7 @@
             </div>
         </header>
 
-        <!-- Ribbon Tab Buttons -->
+        <!-- Horizontally Scrollable Ribbon Nav Tabs -->
         <div class="ribbon-tabs-nav">
             <button class="tab-btn active" onclick="switchRibbonTab(this, 'tab-start')">Start</button>
             <button class="tab-btn" onclick="switchRibbonTab(this, 'tab-insert')">Einfügen</button>
@@ -324,7 +340,7 @@
             <button class="tab-btn" onclick="switchRibbonTab(this, 'tab-view')">Ansicht</button>
         </div>
 
-        <!-- Dynamic Ribbon Toolbars -->
+        <!-- Horizontally Swipeable Ribbon Toolbar -->
         <div class="ribbon-toolbar-content">
             <!-- Tab: Start -->
             <div id="tab-start" class="toolbar-group active">
@@ -338,7 +354,6 @@
             <div id="tab-insert" class="toolbar-group">
                 <button class="tool-action-btn" onclick="insertRow()"><i class="fa-solid fa-table-rows"></i> Zeile oberhalb</button>
                 <button class="tool-action-btn" onclick="insertCol()"><i class="fa-solid fa-table-columns"></i> Spalte links</button>
-                <button class="tool-action-btn" onclick="alert('Diagramm-Assistent bereit')"><i class="fa-solid fa-chart-column"></i> Diagramm</button>
             </div>
 
             <!-- Tab: Formeln -->
@@ -365,14 +380,14 @@
             </div>
         </div>
 
-        <!-- Single Formula Bar -->
+        <!-- Integrated Formula Bar -->
         <div class="single-formula-bar">
             <input type="text" id="name-box" class="cell-address-box" value="A1" readonly>
             <span class="fx-label">fx</span>
-            <input type="text" id="formula-input" class="formula-input" placeholder="Geben Sie einen Wert oder eine Formel ein..." oninput="onFormulaInputChange(this.value)">
+            <input type="text" id="formula-input" class="formula-input" placeholder="Wert oder Formel eingeben..." oninput="onFormulaInputChange(this.value)">
         </div>
 
-        <!-- Main Workspace Sheet Grid -->
+        <!-- Grid Spreadsheet Area -->
         <div id="grid-container">
             <div id="luckysheet"></div>
         </div>
@@ -461,13 +476,8 @@
             else if (cmd === 'italic') luckysheet.setFontItalic();
         }
 
-        function insertRow() {
-            luckysheet.insertRow();
-        }
-
-        function insertCol() {
-            luckysheet.insertColumn();
-        }
+        function insertRow() { luckysheet.insertRow(); }
+        function insertCol() { luckysheet.insertColumn(); }
 
         function insertFormula(fnName) {
             let range = luckysheet.getSelectRange();
@@ -480,23 +490,12 @@
             }
         }
 
-        function sortData(order) {
-            luckysheet.sortSelection(order === 'asc');
-        }
+        function sortData(order) { luckysheet.sortSelection(order === 'asc'); }
+        function toggleFilter() { luckysheet.toggleFilter(); }
+        function toggleGridlines() { luckysheet.setShowGridLines(!luckysheet.getShowGridLines()); }
+        function setZoom(factor) { luckysheet.setZoomRatio(factor); }
 
-        function toggleFilter() {
-            luckysheet.toggleFilter();
-        }
-
-        function toggleGridlines() {
-            luckysheet.setShowGridLines(!luckysheet.getShowGridLines());
-        }
-
-        function setZoom(factor) {
-            luckysheet.setZoomRatio(factor);
-        }
-
-        // XLSX / CSV File Import
+        // XLSX / CSV Import
         function importFile(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
@@ -547,7 +546,39 @@
             });
         }
 
-        // Export Functions
+        // RELIABLE PWA FILE DOWNLOAD HANDLER FOR iOS & STANDALONE MODE
+        async function downloadFilePWA(blob, filename) {
+            const file = new File([blob], filename, { type: blob.type });
+
+            // Check if native Web Share API supports file sharing (iOS 15+ / Safari Standalone)
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: filename
+                    });
+                    return;
+                } catch (e) {
+                    console.log("Share cancelled or not supported, trying fallback...", e);
+                }
+            }
+
+            // Fallback: Convert to Data-URL and trigger target='_blank' link click
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                const dataUrl = reader.result;
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = filename;
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => document.body.removeChild(a), 1000);
+            };
+            reader.readAsDataURL(blob);
+        }
+
+        // Export as XLSX
         function exportXLSX() {
             try {
                 const sheetData = luckysheet.getluckysheetfile();
@@ -560,12 +591,16 @@
                     XLSX.utils.book_append_sheet(wb, ws, sheet.name || "Tabelle1");
                 });
 
-                XLSX.writeFile(wb, "Excel.net_Tabelle.xlsx");
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                
+                downloadFilePWA(blob, "Excel.net_Tabelle.xlsx");
             } catch (e) {
-                alert("Fehler beim Exportieren als XLSX.");
+                alert("Fehler beim Exportieren als XLSX: " + e.message);
             }
         }
 
+        // Export as CSV
         function exportCSV() {
             try {
                 const sheetData = luckysheet.getluckysheetfile()[0];
@@ -574,14 +609,9 @@
                 let csv = XLSX.utils.sheet_to_csv(ws);
 
                 let blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-                let link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.setAttribute("download", "Excel.net_Tabelle.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                downloadFilePWA(blob, "Excel.net_Tabelle.csv");
             } catch (e) {
-                alert("Fehler beim Exportieren als CSV.");
+                alert("Fehler beim Exportieren als CSV: " + e.message);
             }
         }
     </script>
