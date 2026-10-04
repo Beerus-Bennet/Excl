@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Excel.net</title>
     
-    <!-- PWA & Mobile Meta Tags -->
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#0d1b2a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,27 +15,13 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="data:application/manifest+json,{
-      %22name%22:%22Excel.net%22,
-      %22short_name%22:%22Excel.net%22,
-      %22start_url%22:%22./%22,
-      %22display%22:%22standalone%22,
-      %22background_color%22:%22%230d1b2a%22,
-      %22theme_color%22:%22%230d1b2a%22,
-      %22icons%22:[
-        {%22src%22:%22icon.png%22,%22sizes%22:%22180x180%22,%22type%22:%22image/png%22},
-        {%22src%22:%22icon.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22},
-        {%22src%22:%22icon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}
-      ]
-    }">
-
-    <!-- Luckysheet CSS & Dependencies -->
+    <!-- Luckysheet CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/css/pluginsCss.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/plugins.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/css/luckysheet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/assets/iconfont/iconfont.css" />
     
+    <!-- Luckysheet JS -->
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/js/plugin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/luckysheet.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
@@ -93,8 +79,8 @@
         }
 
         .brand-logo {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             object-fit: cover;
             border: 1.5px solid var(--accent-cyan);
@@ -127,9 +113,6 @@
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .btn-outline {
@@ -155,17 +138,15 @@
             top: 0px;
         }
 
-        /* Luckysheet UI Overrides & Fixes */
+        /* Styling Fixes */
+        .luckysheet-input-box {
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+
         .luckysheet-share-logo { display: none !important; }
         .luckysheet_info_detail { display: none !important; }
         #file-input { display: none; }
-        
-        /* Make Luckysheet toolbar scrollable on touch screens */
-        .luckysheet-toolbar-button-split-content, 
-        .luckysheet-toolbar {
-            overflow-x: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-        }
     </style>
 </head>
 <body>
@@ -173,7 +154,7 @@
 <div id="app-container">
     <header>
         <div class="brand">
-            <img class="brand-logo" src="icon.png" alt="BE Logo" onerror="this.style.display='none'">
+            <img class="brand-logo" src="icon.png" alt="Logo" onerror="this.style.display='none'">
             <h1>Excel<span>.net</span></h1>
         </div>
         <div class="header-actions">
@@ -200,8 +181,7 @@
             showstatisticBar: true,
             enableAddRow: true,
             enableAddBackTop: false,
-            userInfo: false,
-            myFolderUrl: ''
+            userInfo: false
         });
     });
 
@@ -210,8 +190,8 @@
         if (!file) return;
 
         Luckyexcel.transformExcelToLucky(file, function(exportJson) {
-            if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-                alert("Datei konnte nicht gelesen werden.");
+            if (!exportJson.sheets || exportJson.sheets.length === 0) {
+                alert("Datei konnte nicht geladen werden.");
                 return;
             }
             luckysheet.destroy();
@@ -243,7 +223,7 @@
                     text: 'Hier ist deine Excel.net Datei'
                 });
             } catch (err) {
-                console.log("Teilen abgebrochen/fehlgeschlagen", err);
+                console.log("Teilen abgebrochen", err);
             }
         } else {
             const a = document.createElement('a');
