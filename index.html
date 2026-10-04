@@ -15,13 +15,15 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     
-    <!-- Luckysheet CSS -->
+    <!-- 1. jQuery (Unbedingt erforderlich vor Luckysheet) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- 2. Luckysheet CSS & JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/css/pluginsCss.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/plugins.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/css/luckysheet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/assets/iconfont/iconfont.css" />
     
-    <!-- jQuery & Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/js/plugin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/luckysheet.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
@@ -44,7 +46,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body, html {
+        html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
@@ -56,7 +58,6 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: -webkit-fill-available;
             width: 100vw;
         }
 
@@ -68,20 +69,20 @@
             padding: max(8px, env(safe-area-inset-top)) 12px 8px 12px;
             border-bottom: 1px solid var(--border-color);
             gap: 8px;
-            z-index: 1000;
+            z-index: 10000;
             flex-shrink: 0;
+            height: 56px;
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-shrink: 0;
         }
 
         .brand-logo {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             object-fit: cover;
             border: 1.5px solid var(--accent-cyan);
@@ -91,7 +92,6 @@
             font-size: 1.1rem;
             font-weight: 800;
             color: #ffffff;
-            letter-spacing: -0.3px;
         }
 
         .brand h1 span {
@@ -101,19 +101,17 @@
         .header-actions {
             display: flex;
             gap: 6px;
-            flex-shrink: 0;
         }
 
         .btn {
             background-color: var(--accent-blue);
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
-            white-space: nowrap;
         }
 
         .btn-outline {
@@ -122,11 +120,12 @@
             color: var(--accent-cyan);
         }
 
-        .sheet-container {
+        #sheet-wrapper {
             flex: 1;
             position: relative;
             width: 100%;
-            height: calc(100vh - 50px);
+            height: calc(100vh - 56px);
+            background: #ffffff;
         }
 
         #luckysheet {
@@ -135,26 +134,17 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            left: 0px;
-            top: 0px;
+            left: 0;
+            top: 0;
         }
 
-        /* Luckysheet CSS Overrides für iOS & Dark Theme Fixes */
+        /* Overrides & Mobile Fixes */
         .luckysheet-share-logo { display: none !important; }
         .luckysheet_info_detail { display: none !important; }
         #file-input { display: none; }
-
-        /* Eingabefeld Textfarbe Fix */
-        .luckysheet-input-box-inner, .luckysheet-cell-editor {
+        
+        .luckysheet-input-box-inner {
             color: #000000 !important;
-            background-color: #ffffff !important;
-        }
-
-        /* Mobile Touch Scrolling auf der Toolbar aktivieren */
-        .luckysheet-toolbar {
-            overflow-x: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            touch-action: pan-x !important;
         }
     </style>
 </head>
@@ -169,96 +159,69 @@
         <div class="header-actions">
             <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">📁 Öffnen</button>
             <input type="file" id="file-input" accept=".xlsx, .csv" onchange="importFile(event)">
-            <button class="btn" onclick="exportXLSX()">💾 Speichern (.xlsx)</button>
+            <button class="btn" onclick="exportXLSX()">💾 Speichern</button>
         </div>
     </header>
 
-    <div class="sheet-container">
+    <div id="sheet-wrapper">
         <div id="luckysheet"></div>
     </div>
 </div>
 
 <script>
-    window.onload = function() {
-        try {
-            luckysheet.create({
-                container: 'luckysheet',
-                title: 'Excel.net',
-                lang: 'de',
-                showtoolbar: true,
-                showtoolbarConfig: {
-                    undoRedo: true,
-                    font: true,
-                    fontSize: true,
-                    bold: true,
-                    italic: true,
-                    underline: true,
-                    strikethrough: true,
-                    textColor: true,
-                    fillColor: true,
-                    border: true,
-                    merge: true,
-                    horizontal: true,
-                    vertical: true,
-                    alignment: true,
-                    textWrap: true,
-                    textRotate: true,
-                    image: true,
-                    chart: false,
-                    postil: true,
-                    pivotTable: false,
-                    function: true,
-                    frozen: true,
-                    sortAndFilter: true,
-                    conditionalFormat: true,
-                    dataVerification: true,
-                    splitColumn: true,
-                    screenshot: false,
-                    findAndReplace: true,
-                    protection: false,
-                    print: false
-                },
-                showinfobar: false,
-                showsheetbar: true,
-                showstatisticBar: true,
-                enableAddRow: true,
-                enableAddBackTop: false,
-                userInfo: false
-            });
-        } catch(e) {
-            console.error("Luckysheet Initialization Error:", e);
-        }
-    };
+    $(document).ready(function() {
+        setTimeout(function() {
+            try {
+                luckysheet.create({
+                    container: 'luckysheet',
+                    title: 'Excel.net',
+                    lang: 'de',
+                    showtoolbar: true,
+                    showinfobar: false,
+                    showsheetbar: true,
+                    showstatisticBar: true,
+                    enableAddRow: true,
+                    enableAddBackTop: false,
+                    userInfo: false,
+                    myFolderUrl: '#'
+                });
+            } catch (e) {
+                console.error("Luckysheet Error:", e);
+                document.getElementById('sheet-wrapper').innerHTML = '<div style="padding:20px; color:#000; text-align:center;"><h3>Tabelle konnte nicht geladen werden.</h3><p>Bitte Seite neu laden oder Inhaltsblocker/InPrivate-Modus deaktivieren.</p></div>';
+            }
+        }, 200);
+    });
 
     function importFile(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        Luckyexcel.transformExcelToLucky(file, function(exportJson) {
-            if (!exportJson.sheets || exportJson.sheets.length === 0) {
-                alert("Datei konnte nicht geladen werden.");
-                return;
-            }
-            luckysheet.destroy();
-            luckysheet.create({
-                container: 'luckysheet',
-                title: file.name.replace(/\.[^/.]+$/, ""),
-                lang: 'de',
-                data: exportJson.sheets,
-                showtoolbar: true,
-                showinfobar: false,
-                showsheetbar: true,
-                showstatisticBar: true
+        if (typeof Luckyexcel !== 'undefined') {
+            Luckyexcel.transformExcelToLucky(file, function(exportJson) {
+                if (!exportJson.sheets || exportJson.sheets.length === 0) {
+                    alert("Datei konnte nicht gelesen werden.");
+                    return;
+                }
+                luckysheet.destroy();
+                luckysheet.create({
+                    container: 'luckysheet',
+                    title: file.name.replace(/\.[^/.]+$/, ""),
+                    lang: 'de',
+                    data: exportJson.sheets,
+                    showtoolbar: true,
+                    showinfobar: false,
+                    showsheetbar: true,
+                    showstatisticBar: true
+                });
             });
-        });
+        }
     }
 
     async function exportXLSX() {
+        if (typeof luckysheet === 'undefined') return;
         const sheets = luckysheet.getluckysheetfile();
-        if (!sheets) return;
-
         const blob = new Blob([JSON.stringify(sheets)], {type: 'application/json'});
-        const file = new File([blob], "Excel.net_Export.json", {type: 'application/json'});
+        const file = new File([blob], "Excel.net_Data.json", {type: 'application/json'});
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
@@ -273,7 +236,7 @@
         } else {
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = "Excel.net_Export.json";
+            a.download = "Excel.net_Data.json";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
