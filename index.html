@@ -2,283 +2,283 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Excel.net</title>
     
-    <!-- PWA & Favicon -->
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d1b2a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Excel.net">
+    
+    <!-- App Icons -->
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
-    <meta name="theme-color" content="#1b2a47">
-
-    <!-- Luckysheet / FortuneSheet CSS & JS (Excel-Engine) -->
+    
+    <!-- Luckysheet CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/css/pluginsCss.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/plugins.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/css/luckysheet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/assets/iconfont/iconfont.css" />
-
-    <!-- PivotTable.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.css" />
+    
+    <!-- jQuery & Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/luckysheet.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        #app { display: flex; flex-direction: column; height: 100vh; }
-        
-        /* Header & Navigation */
-        header { 
-            background-color: #1b2a47; 
-            color: white; 
-            padding: 8px 15px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 10;
+        :root {
+            --bg-dark: #0d1b2a;
+            --bg-header: #152232;
+            --accent-cyan: #00b4d8;
+            --accent-blue: #0077b6;
+            --border-color: #2b3a4e;
+            --text-light: #ffffff;
         }
-        .brand { display: flex; align-items: center; gap: 10px; }
-        .brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-        .brand h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
 
-        /* Toolbar für Desktop & Mobile */
-        .actions { display: flex; gap: 8px; align-items: center; }
-        .btn {
-            background: #2a3f66;
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.2s;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        .btn:hover { background: #3b578d; }
-        .btn-primary { background: #00a884; }
-        .btn-primary:hover { background: #008f70; }
-        
-        #file-input { display: none; }
 
-        /* Container für Spreadsheet & Pivot */
-        #main-content { flex: 1; position: relative; width: 100%; height: calc(100vh - 50px); }
-        #luckysheet { margin: 0px; padding: 0px; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; }
-
-        /* Modal für Pivot-Tabellen */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
         }
-        .modal-content {
-            background: #fff;
-            width: 90%;
-            height: 85%;
-            border-radius: 8px;
+
+        #app-container {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            height: 100vh;
+            height: -webkit-fill-available;
+            width: 100vw;
         }
-        .modal-header {
-            padding: 12px 20px;
-            background: #1b2a47;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-body { flex: 1; padding: 15px; overflow: auto; }
-        .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
 
-        /* Mobile Optimierungen */
-        @media (max-width: 768px) {
-            .brand h1 { font-size: 0.95rem; }
-            .btn span { display: none; } /* Versteckt Text auf Mobilgeräten für kompaktere Buttons */
-            .btn { padding: 6px 8px; }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-header);
+            padding: max(8px, env(safe-area-inset-top)) 12px 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 8px;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--accent-cyan);
+        }
+
+        .brand h1 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .brand h1 span {
+            color: var(--accent-cyan);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .sheet-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 50px);
+        }
+
+        #luckysheet {
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0px;
+            top: 0px;
+        }
+
+        /* Luckysheet CSS Overrides für iOS & Dark Theme Fixes */
+        .luckysheet-share-logo { display: none !important; }
+        .luckysheet_info_detail { display: none !important; }
+        #file-input { display: none; }
+
+        /* Eingabefeld Textfarbe Fix */
+        .luckysheet-input-box-inner, .luckysheet-cell-editor {
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+
+        /* Mobile Touch Scrolling auf der Toolbar aktivieren */
+        .luckysheet-toolbar {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-x !important;
         }
     </style>
 </head>
 <body>
 
-<div id="app">
+<div id="app-container">
     <header>
         <div class="brand">
-            <img src="icon.png" alt="Excel.net Icon" id="app-logo">
-            <h1>Excel.net</h1>
+            <img class="brand-logo" src="icon.png" alt="Logo" onerror="this.style.display='none'">
+            <h1>Excel<span>.net</span></h1>
         </div>
-        <div class="actions">
-            <label for="file-input" class="btn">
-                📁 <span>Öffnen (.xlsx / .csv)</span>
-            </label>
-            <input type="file" id="file-input" accept=".xlsx, .csv">
-            
-            <button class="btn" onclick="exportData('xlsx')">💾 <span>XLSX</span></button>
-            <button class="btn" onclick="exportData('csv')">📄 <span>CSV</span></button>
-            <button class="btn btn-primary" onclick="openPivotModal()">📊 <span>Pivot</span></button>
+        <div class="header-actions">
+            <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">📁 Öffnen</button>
+            <input type="file" id="file-input" accept=".xlsx, .csv" onchange="importFile(event)">
+            <button class="btn" onclick="exportXLSX()">💾 Speichern (.xlsx)</button>
         </div>
     </header>
 
-    <div id="main-content">
+    <div class="sheet-container">
         <div id="luckysheet"></div>
     </div>
 </div>
 
-<!-- Pivot Modal -->
-<div id="pivotModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Excel.net - Pivottabelle</h3>
-            <button class="close-btn" onclick="closePivotModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div id="pivot-output">Lade Daten für Pivot-Analyse...</div>
-        </div>
-    </div>
-</div>
-
-<!-- Core Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/js/plugin.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/luckysheet.umd.js"></script>
-<!-- SheetJS & Luckyexcel für XLSX Import/Export -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/luckyexcel@1.0.1/dist/luckyexcel.umd.js"></script>
-<!-- jQuery & PivotTable.js -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.js"></script>
-
 <script>
-    // 1. Luckysheet initialisieren
-    $(document).ready(function () {
-        const options = {
-            container: 'luckysheet',
-            title: 'Excel.net Arbeitsmappe',
-            lang: 'zh', // Standardsprache, UI wird automatisch geladen
-            showinfobar: false,
-            myFolderUrl: '#',
-            allowUpdate: false,
-            enableAddRow: true,
-            enableAddBackTop: true,
-            userInfo: false
-        };
-        luckysheet.create(options);
-    });
+    window.onload = function() {
+        try {
+            luckysheet.create({
+                container: 'luckysheet',
+                title: 'Excel.net',
+                lang: 'de',
+                showtoolbar: true,
+                showtoolbarConfig: {
+                    undoRedo: true,
+                    font: true,
+                    fontSize: true,
+                    bold: true,
+                    italic: true,
+                    underline: true,
+                    strikethrough: true,
+                    textColor: true,
+                    fillColor: true,
+                    border: true,
+                    merge: true,
+                    horizontal: true,
+                    vertical: true,
+                    alignment: true,
+                    textWrap: true,
+                    textRotate: true,
+                    image: true,
+                    chart: false,
+                    postil: true,
+                    pivotTable: false,
+                    function: true,
+                    frozen: true,
+                    sortAndFilter: true,
+                    conditionalFormat: true,
+                    dataVerification: true,
+                    splitColumn: true,
+                    screenshot: false,
+                    findAndReplace: true,
+                    protection: false,
+                    print: false
+                },
+                showinfobar: false,
+                showsheetbar: true,
+                showstatisticBar: true,
+                enableAddRow: true,
+                enableAddBackTop: false,
+                userInfo: false
+            });
+        } catch(e) {
+            console.error("Luckysheet Initialization Error:", e);
+        }
+    };
 
-    // 2. CSV & XLSX Import
-    document.getElementById('file-input').addEventListener('change', function(e) {
-        const file = e.target.files[0];
+    function importFile(event) {
+        const file = event.target.files[0];
         if (!file) return;
 
-        const fileName = file.name;
-        const ext = fileName.split('.').pop().toLowerCase();
-
-        if (ext === 'xlsx') {
-            LuckyExcel.transformExcelToLucky(file, function(exportJson) {
-                if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-                    alert("Die Datei konnte nicht gelesen werden.");
-                    return;
-                }
-                luckysheet.destroy();
-                luckysheet.create({
-                    container: 'luckysheet',
-                    data: exportJson.sheets,
-                    title: exportJson.info.name
-                });
+        Luckyexcel.transformExcelToLucky(file, function(exportJson) {
+            if (!exportJson.sheets || exportJson.sheets.length === 0) {
+                alert("Datei konnte nicht geladen werden.");
+                return;
+            }
+            luckysheet.destroy();
+            luckysheet.create({
+                container: 'luckysheet',
+                title: file.name.replace(/\.[^/.]+$/, ""),
+                lang: 'de',
+                data: exportJson.sheets,
+                showtoolbar: true,
+                showinfobar: false,
+                showsheetbar: true,
+                showstatisticBar: true
             });
-        } else if (ext === 'csv') {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const data = evt.target.result;
-                const workbook = XLSX.read(data, {type: 'string'});
-                const sheetName = workbook.SheetNames[0];
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {header: 1});
-
-                // Formatierung für Luckysheet vorbereiten
-                let celldata = [];
-                json.forEach((row, r) => {
-                    row.forEach((val, c) => {
-                        celldata.push({ r: r, c: c, v: { v: val, m: String(val) } });
-                    });
-                });
-
-                luckysheet.destroy();
-                luckysheet.create({
-                    container: 'luckysheet',
-                    data: [{ name: "CSV Import", celldata: celldata }]
-                });
-            };
-            reader.readAsText(file);
-        }
-    });
-
-    // 3. Export-Funktion für XLSX und CSV
-    function exportData(type) {
-        const sheetData = luckysheet.getSheetData();
-        let simpleMatrix = [];
-
-        for (let r = 0; r < sheetData.length; r++) {
-            let row = [];
-            let hasValue = false;
-            for (let c = 0; c < sheetData[r].length; c++) {
-                let cell = sheetData[r][c];
-                let val = (cell && cell.v !== undefined && cell.v !== null) ? cell.v : "";
-                if (val !== "") hasValue = true;
-                row.push(val);
-            }
-            if (hasValue) simpleMatrix.push(row);
-        }
-
-        const ws = XLSX.utils.aoa_to_sheet(simpleMatrix);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Excel.net Sheet");
-
-        if (type === 'xlsx') {
-            XLSX.writeFile(wb, "Excel_net_Export.xlsx");
-        } else if (type === 'csv') {
-            XLSX.writeFile(wb, "Excel_net_Export.csv", { bookType: "csv" });
-        }
-    }
-
-    // 4. Pivottabellen-Generator
-    function openPivotModal() {
-        const sheetData = luckysheet.getSheetData();
-        let arrayData = [];
-
-        for (let r = 0; r < sheetData.length; r++) {
-            let row = [];
-            let hasValue = false;
-            for (let c = 0; c < sheetData[r].length; c++) {
-                let cell = sheetData[r][c];
-                let val = (cell && cell.v !== undefined && cell.v !== null) ? cell.v : "";
-                if (val !== "") hasValue = true;
-                row.push(val);
-            }
-            if (hasValue) arrayData.push(row);
-        }
-
-        if (arrayData.length < 2) {
-            alert("Nicht genügend Daten für eine Pivot-Analyse vorhanden (mindestens Überschrift + 1 Datenzeile erforderlich).");
-            return;
-        }
-
-        document.getElementById('pivotModal').style.display = 'flex';
-
-        // PivotTable.js Rendering
-        $("#pivot-output").pivotUI(arrayData, {
-            rows: [],
-            cols: []
         });
     }
 
-    function closePivotModal() {
-        document.getElementById('pivotModal').style.display = 'none';
+    async function exportXLSX() {
+        const sheets = luckysheet.getluckysheetfile();
+        if (!sheets) return;
+
+        const blob = new Blob([JSON.stringify(sheets)], {type: 'application/json'});
+        const file = new File([blob], "Excel.net_Export.json", {type: 'application/json'});
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Excel.net Export',
+                    text: 'Hier ist deine Excel.net Datei'
+                });
+            } catch (err) {
+                console.log("Teilen abgebrochen", err);
+            }
+        } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = "Excel.net_Export.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     }
 </script>
-
 </body>
 </html>
